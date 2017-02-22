@@ -33,7 +33,7 @@ def MakeTrainingData_y(pd_data):
     np.savetxt("TrainingData_y.csv", np_data_y, delimiter=",")
     return np_data_y
 
-def Training(input_num,hidden_1_num,hidden_2_num,output_num,test_size,np_data_x,np_data_y,training_times):
+def Prediction(input_num,hidden_1_num,hidden_2_num,output_num,np_data_x,np_data_y):
     INPUT = input_num
     #print(INPUT)
     HIDDEN_1 = hidden_1_num
@@ -42,34 +42,11 @@ def Training(input_num,hidden_1_num,hidden_2_num,output_num,test_size,np_data_x,
     #print(HIDDEN_2)
     OUTPUT = output_num
     #print(OUTPUT)
-    TEST_SIZE = test_size
-    #print(TEST_SIZE)
-    TRAINING_TIMES = training_times
+
     #print(np_data_x)
     #print(np_data_y)
     
-    train_x = []
-    train_y = []
-    test_x = []
-    test_y = []
-    
-    training_loss = []
-    testing_loss =[]
     acuracy = []
-    profit = []
-    
-    for i in range(len(np_data_x)):
-        if(np.random.rand() > TEST_SIZE):
-            train_x.append(np_data_x[i])
-            train_y.append(np_data_y[i])
-        else:
-            test_x.append(np_data_x[i])
-            test_y.append(np_data_y[i])
-            
-    #print(train_x)
-    #print(train_y)
-    #print(test_x)
-    #print(test_y)
             
     x = tf.placeholder(tf.float32, [None, INPUT])
 
@@ -107,29 +84,12 @@ def Training(input_num,hidden_1_num,hidden_2_num,output_num,test_size,np_data_x,
         print("inti variables")
         sess.run(init)
         
-    for i in range(TRAINING_TIMES):
-        sess.run(train, feed_dict={x: train_x, y_: train_y})
-        
-        if(i%1000 == 0):
-            
-            print("training..." + "step:" + str(i))
-            print(sess.run(accuracy, feed_dict={x: train_x, y_: train_y}))
-            
-            print("testing...")
-            print(sess.run(accuracy, feed_dict={x: test_x, y_: test_y}))
-            
-            train_x = []
-            train_y = []
-            test_x = []
-            test_y = []
-            
-            for i in range(len(np_data_x)):
-                if(np.random.rand() > TEST_SIZE):
-                    train_x.append(np_data_x[i])
-                    train_y.append(np_data_y[i])
-                else:
-                    test_x.append(np_data_x[i])
-                    test_y.append(np_data_y[i])
+    print("Prediction")
+    print(sess.run(accuracy, feed_dict={x: np_data_x, y_: np_data_y}))
+    
+    prediction_y = sess.run(y, feed_dict={x: np_data_x})
+    print(prediction_y)
+    np.savetxt("Prediction_y.csv", prediction_y, delimiter=",")
     
     saver.save(sess, "./model.ckpt")
     sess.close()
@@ -142,4 +102,4 @@ np_data_x = MakeTrainingData_x(pd_load_data)
 #print(np_data_x)
 np_data_y = MakeTrainingData_y(pd_load_data)
 #print(np_data_y)
-Training(int(args[1]),int(args[2]),int(args[3]),int(args[4]),0.1,np_data_x,np_data_y,10000)
+Prediction(int(args[1]),int(args[2]),int(args[3]),int(args[4]),np_data_x,np_data_y)
