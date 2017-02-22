@@ -88,8 +88,10 @@ def Prediction(input_num,hidden_1_num,hidden_2_num,output_num,np_data_x,np_data_
     print(sess.run(accuracy, feed_dict={x: np_data_x, y_: np_data_y}))
     
     prediction_y = sess.run(y, feed_dict={x: np_data_x})
-    print(prediction_y)
+    #print(prediction_y)
+    
     np.savetxt("Prediction_y.csv", prediction_y, delimiter=",")
+    np.savetxt("Prediction_y_.csv", np_data_y, delimiter=",")
     
     saver.save(sess, "./model.ckpt")
     sess.close()
